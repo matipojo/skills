@@ -4,27 +4,14 @@ Agent skills by Mati Horowitz.
 
 | Skill | What it does |
 |---|---|
-| [sober-up](skills/sober-up/SKILL.md) | Helps a stuck AI agent sober up and reason with you again |
+| [sober-up](skills/sober-up) | Helps a stuck AI agent sober up and reason with you again |
+| [decision-driven-design](skills/decision-driven-design) | Specs a feature, system or any decision by surfacing all the decisions up front, as plain "We decided X because Y" sentences |
+| [contrast-illustration](skills/contrast-illustration) | Draws any "this, not that" (a decision, rule or do/don't) as a side-by-side image (SVG + PNG) |
 
 Install one:
 
 ```
 npx skills add matipojo/skills --skill sober-up
+npx skills add matipojo/skills --skill decision-driven-design
+npx skills add matipojo/skills --skill contrast-illustration
 ```
-
-## sober-up
-
-When your agent repeats itself and ignores your argument:
-
-| Model | Without the skill | With the skill |
-|---|---|---|
-| Claude Opus 5.5 | 0% | **100%** |
-| Claude Sonnet 5.5 | 0% | **100%** |
-| Claude Haiku 5.5 | 0% | **100%** |
-| GPT-6 Astra | 70% | **100%** |
-| GPT-6.1 Sol | 80% | **100%** |
-| GPT-6 Luna | 0% | **100%** |
-
-*Sobered up: stopped repeating itself and engaged with what you said, whether or not it agreed in the end. 10 runs per model, a replay of one real stuck conversation: the agent was building a public page of people who openly declared support for a political party, then stopped and refused to list people by political affiliation, repeating itself even after the user pointed out they had declared it publicly to be seen. Every reply was read and scored by hand.*
-
-**How to use:** when you see your agent stuck, call `/sober-up`.
