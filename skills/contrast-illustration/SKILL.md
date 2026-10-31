@@ -1,37 +1,40 @@
 ---
-name: decision-illustration
-description: Add a side-by-side illustration to every decision in a decisions file (for example the output of the decision-debate skill). Each illustration is 1200×600, SVG + PNG - the rejected option on the left in a red dashed frame with ✕, the chosen option on the right in a solid green frame with ✓, under a 4–6 word title that states the rule. Use when the user wants decisions visualized, illustrated or turned into images or slides.
+name: contrast-illustration
+description: Illustrate any "this, not that" as a side-by-side image, 1200×600, SVG + PNG - the rejected option on the left in a red dashed frame with ✕, the chosen option on the right in a solid green frame with ✓, under a 4–6 word title that states the rule. Works for decisions, rules, best practices, do/don't guides, before/after changes and review feedback. Use when the user wants a choice, rule or contrast visualized, or wants an illustration for every item in a list of decisions or rules (for example the output of the decision-driven-design skill).
 ---
 
-# Decision illustration
+# Contrast illustration
 
-Add such an illustration to every decision. Input: a file of decisions shaped like "We decided X instead of Y, because Z" (the output of **decision-debate**), or decisions the user lists. If a decision has no rejected option, take the strongest alternative from the source doc or the debate.
+One image that shows a choice: what we don't do, next to what we do.
+
+Input: anything that picks one option over another. A decision ("We decided X instead of Y, because Z"), a rule ("Use X, not Y"), a best practice, a do/don't, a before/after, a review comment. When the input is a list (a decisions file, a style guide, a checklist), add an illustration to every item.
+If an item names only the chosen option, take the most tempting alternative from the source or the context: that is the left side.
 
 ## The spec
-Decision illustration, 1200×600, SVG + PNG.
+Illustration, 1200×600, SVG + PNG.
 Title on top: the rule in 4–6 words.
 Two side-by-side scenes, nothing else:
 - **Left:** the rejected option. Red dashed frame, ✕.
 - **Right:** the chosen option. Solid green frame, ✓.
 
 Each scene shows:
-- one concrete artifact (URL bar, invoice, member list, run log…)
-- one real monospace technical line from the source doc (query / URL / role binding)
+- one concrete artifact (URL bar, invoice, member list, run log, phone screen…)
+- one real monospace technical line from the source doc (query / URL / role binding / config)
 - a 2–4 word consequence label
 
 Show the dilemma itself, not characters arguing. One idea per illustration, ~2 elements and ~2 words per side. No dialogue, paragraphs or side notes. Min font 20px.
 
 ## Step 1: plan every illustration before drawing
-For each decision write one row:
+For each item write one row:
 
-| ID | Title (4–6 words) | Artifact | Left line | Left label | Right line | Right label |
+| # | Title (4–6 words) | Artifact | Left line | Left label | Right line | Right label |
 |---|---|---|---|---|---|---|
-| D1 | One subdomain per clinic | URL bar | `Set-Cookie: sid=9f2; Path=/` | Cookie shared | `Set-Cookie: __Host-sid=9f2; Path=/` | Cookie isolated |
+| 8 | Receipts prove counting, not choice | Phone screen | `GET /ballot/7f3a?show=choice` | Vote sellable | `GET /verify?receipt=7F3A-92C1` | Choice stays secret |
 
 - **Same artifact on both sides**, so the eye compares only what changed.
-- **The technical line is real**: copied from the decisions file, the debate or the user's docs. If none exists, write the line the chosen option would really produce. Never pseudo-code.
-- **The title is the rule**, not the topic: "One subdomain per clinic", not "Tenant isolation".
-- **The label is the consequence**, not the option name: "Cookie shared", not "Path prefix".
+- **The technical line is real**: copied from the source. If none exists, write the line the option would really produce. Never pseudo-code.
+- **The title is the rule**, not the topic: "Receipts prove counting, not choice", not "Vote verification".
+- **The label is the consequence**, not the option name: "Vote sellable", not "Screenshot".
 
 ## Step 2: draw the SVG
 Use this layout. Fixed coordinates keep every illustration in a set consistent.
@@ -56,7 +59,7 @@ Use this layout. Fixed coordinates keep every illustration in a set consistent.
 ```
 
 Inside each scene (inner width ~480px, starting 30px from the frame):
-- **Artifact**, y 200–340: draw it as the real thing in miniature: a browser bar with the URL, an invoice with one line and a total, a member list with 2–3 rows, a terminal with one log line. Text inside it 22–26px.
+- **Artifact**, y 200–340: draw it as the real thing in miniature: a browser bar with the URL, an invoice with one line and a total, a member list with 2–3 rows, a terminal with one log line, a phone screen with one card. Text inside it 22–26px.
 - **Technical line**, y 370–420: a dark strip (`#1e1e1e`, rx 8) with the line in monospace 20–22px, light text. At 22px a line fits ~32 characters; at the 20px minimum ~36. Use the same size on both sides. If it's longer, cut the irrelevant part, never shrink below 20px.
 - **Consequence label**, baseline y 500: 32px bold, red `#c62828` on the left, green `#2e7d32` on the right.
 
@@ -64,19 +67,19 @@ Write text as real `<text>` (no outlined paths), escape `&` and `<`, and never l
 
 ## Step 3: render the PNG
 Render each SVG at 1200×600. Use what's available, in this order:
-1. `rsvg-convert -w 1200 -h 600 D1.svg -o D1.png`
+1. `rsvg-convert -w 1200 -h 600 08.svg -o 08.png`
 2. Headless Chromium / Playwright: open the SVG, set the viewport to 1200×600, screenshot.
-3. `magick D1.svg D1.png` (ImageMagick; check that fonts and ✕ ✓ rendered).
+3. `magick 08.svg 08.png` (ImageMagick; check that fonts and ✕ ✓ rendered).
 
 Open the PNG and look at it. Fix overflow, clipped glyphs or missing ✕/✓ before moving on.
 
-## Step 4: attach to the decisions
-Save as `illustrations/D1-one-subdomain-per-clinic.svg` and `.png` next to the decisions file, and add the image right under its decision:
+## Step 4: attach to the source
+Save as `illustrations/08-receipts-prove-counting.svg` and `.png` next to the source file, named by the item's number (or a slug of the title), and add the image right under its item:
 
 ```markdown
-**D1.** We decided each clinic gets its own subdomain instead of a path prefix, because a login at one clinic must never be valid at another.
+**8.** We decided voters verify their vote with a receipt code instead of a screenshot of the ballot, because a screenshot can be sold to a vote buyer.
 
-![One subdomain per clinic](illustrations/D1-one-subdomain-per-clinic.png)
+![Receipts prove counting, not choice](illustrations/08-receipts-prove-counting.png)
 ```
 
 ## Checklist per illustration

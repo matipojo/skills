@@ -5,15 +5,15 @@ Agent skills by Mati Horowitz.
 | Skill | What it does |
 |---|---|
 | [sober-up](skills/sober-up/SKILL.md) | Helps a stuck AI agent sober up and reason with you again |
-| [decision-debate](skills/decision-debate/SKILL.md) | Plans any topic through a heated persona debate and hands you plain "We decided X because Y" sentences |
-| [decision-illustration](skills/decision-illustration/SKILL.md) | Turns every decision into a rejected-vs-chosen illustration (SVG + PNG) |
+| [decision-driven-design](skills/decision-driven-design/SKILL.md) | Specs a feature, system or any decision by surfacing all the decisions up front, as plain "We decided X because Y" sentences |
+| [contrast-illustration](skills/contrast-illustration/SKILL.md) | Draws any "this, not that" (a decision, rule or do/don't) as a side-by-side image (SVG + PNG) |
 
 Install one:
 
 ```
 npx skills add matipojo/skills --skill sober-up
-npx skills add matipojo/skills --skill decision-debate
-npx skills add matipojo/skills --skill decision-illustration
+npx skills add matipojo/skills --skill decision-driven-design
+npx skills add matipojo/skills --skill contrast-illustration
 ```
 
 ## sober-up
@@ -33,51 +33,50 @@ When your agent repeats itself and ignores your argument:
 
 **How to use:** when you see your agent stuck, call `/sober-up`.
 
-## decision-debate
+## decision-driven-design
 
-Plan anything by letting biased personas fight it out, then get only the decisions.
+A spec is mostly decisions, and they hurt because they're hidden: you discover them one at a time. Decision Driven Design (DDD) flips that. The agent simulates a debate between personas it picks for the topic, builds an explicit decision tree, and decides everything up front, in plain sentences. You fix only what's wrong.
 
 ```
-/decision-debate Plan a booking app for small clinics
+/decision-driven-design Spec a digital voting system
 ```
 
-**1. The debate** (5–7 personas, every clash becomes a decision node):
+**1. Personas picked for the topic, and a heated debate.** Every clash becomes a node:
 
-> **Security lead:** A path prefix means one cookie for every clinic. One shared laptop at the front desk and clinic A is logged into clinic B. → **D1**
+> **Security auditor:** If the voter can see a screenshot of their ballot, so can whoever paid them for it. → **N4**
 >
-> **Builder:** Subdomains mean wildcard TLS and DNS for every new clinic. We're two developers.
+> **Voter:** Then how do I know my vote was counted at all?
 
-**2. The tree** (wide and deep, with simulated constraints ⚠, benefits ✚ and pruned branches ✂):
+**2. An explicit decision tree,** with simulated constraints ⚠, benefits ✚ and pruned branches ✂:
 
 ```
-D1 How are clinics separated?
-  D1.1 Path prefix /t/{clinic}      ⚠ sessions shared across clinics
-  D1.2 Subdomain {clinic}.app.com   ✚ per-clinic branding comes free
-    D1.2.1 Custom domains?          ✂ no: support cost too high for v1
-  D1.3 Deployment per clinic        ✂ 10× ops cost
-D2 Who pays? ...  (14 more nodes)
+N4 How does a voter verify their vote?
+  N4.1 Screenshot of the ballot   ⚠ proof of choice, can be sold
+  N4.2 Receipt code, look it up   ✚ proves counting, hides the choice
+    N4.2.1 Where is the lookup?   → public bulletin board
+  N4.3 No verification            ✂ trust collapses after the first dispute
 ```
 
-**3. Your decisions, simulated** from your stated priorities (override any by ID: `D1 → 1.1`).
+**3. Every decision, simulated in advance, in `decisions.md`:**
 
-**4. The result, `decisions.md`:**
-
-> **D1.** We decided each clinic gets its own subdomain instead of a path prefix, because a login at one clinic must never be valid at another.
+> **8.** We decided voters verify their vote with a receipt code instead of a screenshot of the ballot, because a screenshot can be sold to a vote buyer.
 >
-> **D1.2.1.** We decided not to support custom domains in v1, because each one is a support ticket.
->
-> **D2.** We decided to charge per clinic instead of per seat, because owners refuse to count receptionists.
+> **9.** We decided receipt codes are checked on a public bulletin board instead of inside the app, because anyone should be able to audit it without logging in.
 
-Want visuals? It hands off to **decision-illustration**.
+**4. Fix by number:** `Decision 8: change to...`. Only its subtree is re-simulated, and every other number stays.
 
-## decision-illustration
+The rationale for each decision is kept in the debate (`decision-tree.md`). Inspired by Google's Dream-RSI research, where the agent simulates alternative decisions on an explicit decision tree instead of discovering them the hard way. Full example, 32 decisions: [ddd-prompt.surge.sh](https://ddd-prompt.surge.sh)
 
-One illustration per decision: the rule as the title, the rejected option left, the chosen one right.
+Want visuals? It hands off to **contrast-illustration**.
+
+## contrast-illustration
+
+One image per "this, not that": the rule as the title, the rejected option left, the chosen one right. Works for decisions, rules, best practices, do/don't guides and before/after changes.
 
 ```
 Add an illustration to every decision in decisions.md
 ```
 
-![One subdomain per clinic](skills/decision-illustration/examples/D1-one-subdomain-per-clinic.png)
+![Receipts prove counting, not choice](skills/contrast-illustration/examples/08-receipts-prove-counting.png)
 
-Each side: one artifact, one real technical line, a 2–4 word consequence. 1200×600, SVG + PNG, added under each decision in the file.
+Each side: one artifact, one real technical line, a 2–4 word consequence. 1200×600, SVG + PNG, added under each item in the source file.
