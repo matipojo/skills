@@ -43,7 +43,7 @@ A spec is mostly decisions. They hurt because they're hidden, so you discover th
 /decision-driven-design Spec a digital voting system
 ```
 
-**What you get:** 32 decisions like these, most of which you didn't know you had to make:
+**What you get:** dozens of decisions like these, most of which you didn't know you had to make:
 
 > **3.** We decided voters can re-vote until the polls close, and only the last vote counts, because then a coerced vote can be quietly replaced.
 >
@@ -55,7 +55,7 @@ A spec is mostly decisions. They hurt because they're hidden, so you discover th
 
 **Disagree with one? One line:** `Decision 8: change to...`
 
-Each decision's rationale is in the debate itself. Full example, all 32 decisions: [ddd-prompt.surge.sh](https://ddd-prompt.surge.sh)
+Each decision's rationale is in the debate itself.
 
 Inspired by Google's Dream-RSI research, where the agent simulates alternative decisions on an explicit decision tree instead of discovering them the hard way.
 
