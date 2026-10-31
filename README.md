@@ -35,37 +35,29 @@ When your agent repeats itself and ignores your argument:
 
 ## decision-driven-design
 
-A spec is mostly decisions, and they hurt because they're hidden: you discover them one at a time. Decision Driven Design (DDD) flips that. The agent simulates a debate between personas it picks for the topic, builds an explicit decision tree, and decides everything up front, in plain sentences. You fix only what's wrong.
+**One short prompt in, a complete and meticulous spec out.** It reaches the nuances you would never have reached on your own, and decides all of them for you up front.
+
+A spec is mostly decisions. They hurt because they're hidden, so you discover them one at a time, usually too late. DDD (Decision Driven Design) surfaces them all at once: the agent argues the topic out between personas it picks, then decides everything in plain sentences.
 
 ```
 /decision-driven-design Spec a digital voting system
 ```
 
-**1. Personas picked for the topic, and a heated debate.** Every clash becomes a node:
+**What you get:** 32 decisions like these, most of which you didn't know you had to make:
 
-> **Security auditor:** If the voter can see a screenshot of their ballot, so can whoever paid them for it. → **N4**
+> **3.** We decided voters can re-vote until the polls close, and only the last vote counts, because then a coerced vote can be quietly replaced.
 >
-> **Voter:** Then how do I know my vote was counted at all?
-
-**2. An explicit decision tree,** with simulated constraints ⚠, benefits ✚ and pruned branches ✂:
-
-```
-N4 How does a voter verify their vote?
-  N4.1 Screenshot of the ballot   ⚠ proof of choice, can be sold
-  N4.2 Receipt code, look it up   ✚ proves counting, hides the choice
-    N4.2.1 Where is the lookup?   → public bulletin board
-  N4.3 No verification            ✂ trust collapses after the first dispute
-```
-
-**3. Your decisions, simulated, in a file of plain sentences:**
-
 > **8.** We decided voters verify their vote with a receipt code instead of a screenshot of the ballot, because a screenshot can be sold to a vote buyer.
 >
-> **9.** We decided receipt codes are checked on a public bulletin board instead of inside the app, because anyone should be able to audit it without logging in.
+> **14.** We decided the count runs on paper backups as well, because a recount must not depend on the system being recounted.
+>
+> **21.** We decided results are published only after every polling station closes, because early numbers change who bothers to vote.
 
-**4. Fix what's wrong:** `Decision 8: change to...`
+**Disagree with one? One line:** `Decision 8: change to...`
 
-The rationale for each decision is in the debate itself. Inspired by Google's Dream-RSI research, where the agent simulates alternative decisions on an explicit decision tree instead of discovering them the hard way. Full example, 32 decisions: [ddd-prompt.surge.sh](https://ddd-prompt.surge.sh)
+Each decision's rationale is in the debate itself. Full example, all 32 decisions: [ddd-prompt.surge.sh](https://ddd-prompt.surge.sh)
+
+Inspired by Google's Dream-RSI research, where the agent simulates alternative decisions on an explicit decision tree instead of discovering them the hard way.
 
 Want visuals? It hands off to **contrast-illustration**.
 
