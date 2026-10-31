@@ -57,15 +57,15 @@ N4 How does a voter verify their vote?
   N4.3 No verification            ✂ trust collapses after the first dispute
 ```
 
-**3. Every decision, simulated in advance, in `decisions.md`:**
+**3. Your decisions, simulated, in a file of plain sentences:**
 
 > **8.** We decided voters verify their vote with a receipt code instead of a screenshot of the ballot, because a screenshot can be sold to a vote buyer.
 >
 > **9.** We decided receipt codes are checked on a public bulletin board instead of inside the app, because anyone should be able to audit it without logging in.
 
-**4. Fix by number:** `Decision 8: change to...`. Only its subtree is re-simulated, and every other number stays.
+**4. Fix what's wrong:** `Decision 8: change to...`
 
-The rationale for each decision is kept in the debate (`decision-tree.md`). Inspired by Google's Dream-RSI research, where the agent simulates alternative decisions on an explicit decision tree instead of discovering them the hard way. Full example, 32 decisions: [ddd-prompt.surge.sh](https://ddd-prompt.surge.sh)
+The rationale for each decision is in the debate itself. Inspired by Google's Dream-RSI research, where the agent simulates alternative decisions on an explicit decision tree instead of discovering them the hard way. Full example, 32 decisions: [ddd-prompt.surge.sh](https://ddd-prompt.surge.sh)
 
 Want visuals? It hands off to **contrast-illustration**.
 
@@ -74,9 +74,9 @@ Want visuals? It hands off to **contrast-illustration**.
 One image per "this, not that": the rule as the title, the rejected option left, the chosen one right. Works for decisions, rules, best practices, do/don't guides and before/after changes.
 
 ```
-Add an illustration to every decision in decisions.md
+Add an illustration to every decision
 ```
 
 ![Receipts prove counting, not choice](skills/contrast-illustration/examples/08-receipts-prove-counting.png)
 
-Each side: one artifact, one real technical line, a 2–4 word consequence. 1200×600, SVG + PNG, added under each item in the source file.
+Each side: one artifact, one real technical line, a 2–4 word consequence. 1200×600, SVG + PNG.
