@@ -44,6 +44,7 @@ Plan anything by letting biased personas fight it out, then get only the decisio
 **1. The debate** (5–7 personas, every clash becomes a decision node):
 
 > **Security lead:** A path prefix means one cookie for every clinic. One shared laptop at the front desk and clinic A is logged into clinic B. → **D1**
+>
 > **Builder:** Subdomains mean wildcard TLS and DNS for every new clinic. We're two developers.
 
 **2. The tree** (wide and deep, with simulated constraints ⚠, benefits ✚ and pruned branches ✂):
@@ -62,7 +63,9 @@ D2 Who pays? ...  (14 more nodes)
 **4. The result, `decisions.md`:**
 
 > **D1.** We decided each clinic gets its own subdomain instead of a path prefix, because a login at one clinic must never be valid at another.
+>
 > **D1.2.1.** We decided not to support custom domains in v1, because each one is a support ticket.
+>
 > **D2.** We decided to charge per clinic instead of per seat, because owners refuse to count receptionists.
 
 Want visuals? It hands off to **decision-illustration**.
