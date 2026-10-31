@@ -7,10 +7,10 @@ description: Decision Driven Design (DDD). Spec a feature, a system, or any set 
 
 A spec is mostly decisions. They are painful because they are hidden: you chase them and discover them one at a time. DDD flips this. Surface every decision up front, decide all of them in advance, and let the user correct only the few that are wrong.
 
-Input: a topic, e.g. "Spec a digital voting system" or "Should we move to a monorepo?". Features, systems, and plain decisions all work. If the user gave context (goals, budget, team, deadline, values), use it everywhere below. If not, don't ask; state your assumptions in one line and continue.
+Input: a topic, e.g. "Spec a team invite flow" or "Should we move to a monorepo?". Features, systems, and plain decisions all work. If the user gave context (goals, budget, team, deadline, values), use it everywhere below. If not, don't ask; state your assumptions in one line and continue.
 
 ## Step 1: choose the personas
-Choose 4–7 personas that are **specific to this topic**, the people whose interests really collide here. Not a generic set. For a voting system that might be the voter, the election official, the security auditor, the accessibility advocate, the losing candidate's lawyer, the budget owner.
+Choose 4–7 personas that are **specific to this topic**, the people whose interests really collide here. Not a generic set. For a team invite flow that might be the workspace admin, the invited user, the security lead, the growth lead who wants viral signups, the support agent, the billing owner.
 For each one write one line: **who they are, what they want, their red line.** No neutral moderator, every persona is biased on purpose.
 
 ## Step 2: simulate the debate
@@ -27,16 +27,16 @@ The debate is the rationale. Every decision later points back to the round where
 - Per option: which persona pushes it, and one line of what it costs.
 
 ```
-N1 How do voters prove who they are?
-  N1.1 National ID + SMS code      [Official]   cheap, SIM-swap risk
-  N1.2 In-person enrolled key      [Auditor]    strong, excludes remote voters
-    N1.2.1 Who issues the keys?
-  N1.3 Bank login (federated)      [Budget]     zero cost, a bank sees who voted
+N1 How does someone get invited?
+  N1.1 Shareable invite link       [Growth]     fastest, link leaks to strangers
+  N1.2 Invite by email address     [Security]   only that person can join
+    N1.2.1 Do invites expire?
+  N1.3 Admin approves every join   [Admin]      safe, slow, admin bottleneck
 ```
 
 ## Step 4: simulate alternatives on the tree
 Walk the tree and simulate what each branch would hit in reality: a law, a cost spike, an attack, a vendor limit, a support burden, an advantage that comes free.
-- Attach it to the exact node: `⚠ N1.1 SIM swap lets an attacker vote` or `✚ N1.3 no enrollment needed`.
+- Attach it to the exact node: `⚠ N1.1 a link posted in a public chat lets anyone join` or `✚ N1.2 the email doubles as a verified login`.
 - A constraint can **prune** a branch (`✂`) or force a child decision. A benefit can make a branch dominant.
 - Propagate: if a constraint deep in the tree kills an option, update the decisions above it.
 
@@ -49,8 +49,8 @@ Decide every surviving node as the user would. Don't stop to ask.
 Write `decisions.md` (or the name the user gave). This is the deliverable: numbered decisions, one plain sentence each.
 
 ```markdown
-**8.** We decided voters verify their vote with a receipt code instead of seeing a screenshot of the ballot, because a screenshot can be sold to a vote buyer.
-<sub>N4.2 · debate round 2: Auditor vs. Voter</sub>
+**8.** We decided invites go to a specific email address instead of a shareable link, because a link forwarded once lets a stranger into the workspace.
+<sub>N1.2 · debate round 2: Security lead vs. Growth lead</sub>
 ```
 
 - Shape: **We decided X instead of Y, because Z.** Y is the strongest rejected option. Z is the one reason that decided it, not a list.

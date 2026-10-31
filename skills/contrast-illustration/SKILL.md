@@ -29,12 +29,12 @@ For each item write one row:
 
 | # | Title (4–6 words) | Artifact | Left line | Left label | Right line | Right label |
 |---|---|---|---|---|---|---|
-| 8 | Receipts prove counting, not choice | Phone screen | `GET /ballot/7f3a?show=choice` | Vote sellable | `GET /verify?receipt=7F3A-92C1` | Choice stays secret |
+| 8 | Invites go to one person | Member list | `GET /join?link=k7Qp2x` | Strangers join | `POST /invites email=dana@acme.io` | Only Dana joins |
 
 - **Same artifact on both sides**, so the eye compares only what changed.
 - **The technical line is real**: copied from the source. If none exists, write the line the option would really produce. Never pseudo-code.
-- **The title is the rule**, not the topic: "Receipts prove counting, not choice", not "Vote verification".
-- **The label is the consequence**, not the option name: "Vote sellable", not "Screenshot".
+- **The title is the rule**, not the topic: "Invites go to one person", not "Invite method".
+- **The label is the consequence**, not the option name: "Strangers join", not "Invite link".
 
 ## Step 2: draw the SVG
 Use this layout. Fixed coordinates keep every illustration in a set consistent.
@@ -74,12 +74,12 @@ Render each SVG at 1200×600. Use what's available, in this order:
 Open the PNG and look at it. Fix overflow, clipped glyphs or missing ✕/✓ before moving on.
 
 ## Step 4: attach to the source
-Save as `illustrations/08-receipts-prove-counting.svg` and `.png` next to the source file, named by the item's number (or a slug of the title), and add the image right under its item:
+Save as `illustrations/08-invites-go-to-one-person.svg` and `.png` next to the source file, named by the item's number (or a slug of the title), and add the image right under its item:
 
 ```markdown
-**8.** We decided voters verify their vote with a receipt code instead of a screenshot of the ballot, because a screenshot can be sold to a vote buyer.
+**8.** We decided invites go to a specific email address instead of a shareable link, because a link forwarded once lets a stranger into the workspace.
 
-![Receipts prove counting, not choice](illustrations/08-receipts-prove-counting.png)
+![Invites go to one person](illustrations/08-invites-go-to-one-person.png)
 ```
 
 ## Checklist per illustration
