@@ -1,0 +1,28 @@
+# A PR that changes a skill must not also change the test that measures it.
+# Change the eval in a separate PR first.
+name: eval guard
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Skill and eval are not changed together
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          changed=$(git diff --name-only "$BASE...$HEAD")
+          echo "$changed"
+          if echo "$changed" | grep -q '^skills/' && echo "$changed" | grep -qE '^(evals/|\.github/workflows/)'; then
+            echo "::error::This PR changes a skill and its eval (or the workflows) together. Split the eval change into its own PR."
+            exit 1
+          fi

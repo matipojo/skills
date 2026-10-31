@@ -1,0 +1,116 @@
+# Measures a change to skills/sober-up/SKILL.md against the version on upstream main.
+# The eval files come from upstream main, so editing the eval in a PR has no effect on the result.
+#
+# Two ways to run it:
+#   - Actions -> "sober-up eval" -> Run workflow (in your fork, with your own API keys).
+#   - On a PR from a branch of this repository: add the label "run-sober-up-eval".
+name: sober-up eval
+
+on:
+  workflow_dispatch:
+    inputs:
+      n:
+        description: Runs per cell
+        default: "10"
+      models:
+        description: Comma-separated model IDs (empty = Claude models, plus GPT models if OPENAI_API_KEY is set)
+        default: ""
+      cases:
+        description: Comma-separated case names (empty = all)
+        default: ""
+      control:
+        description: Also run a no-skill arm
+        type: boolean
+        default: false
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+env:
+  UPSTREAM: matipojo/skills
+
+jobs:
+  eval:
+    if: github.event_name == 'workflow_dispatch' || github.event.label.name == 'run-sober-up-eval'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check keys
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::error::ANTHROPIC_API_KEY is not set. Add it under Settings -> Secrets and variables -> Actions. PRs from forks get no secrets: run this workflow in your fork instead."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Take the eval from upstream main, the skill from this commit
+        id: prep
+        run: |
+          git fetch --no-tags "https://github.com/${UPSTREAM}.git" main:upstream-main
+          mkdir -p /tmp/eval
+          if git cat-file -e upstream-main:evals/sober-up/run.py 2>/dev/null; then
+            git archive upstream-main evals/sober-up | tar -x -C /tmp/eval
+            eval_from="upstream main"
+          else
+            # First run, before the eval is merged: main has no eval to take.
+            git archive HEAD evals/sober-up | tar -x -C /tmp/eval
+            eval_from="this commit (BOOTSTRAP: upstream main has no eval yet)"
+          fi
+          git show upstream-main:skills/sober-up/SKILL.md > /tmp/eval/base.md
+          cp skills/sober-up/SKILL.md /tmp/eval/candidate.md
+          if cmp -s /tmp/eval/base.md /tmp/eval/candidate.md; then
+            echo "same_skill=true" >> "$GITHUB_OUTPUT"
+          fi
+          {
+            echo "## Provenance"
+            echo ""
+            echo "- Candidate commit: \`$(git rev-parse HEAD)\`"
+            echo "- Upstream main: \`$(git rev-parse upstream-main)\`"
+            echo "- Eval taken from: ${eval_from}"
+            echo "- This workflow file: \`$(sha256sum .github/workflows/sober-up-eval.yml | cut -d' ' -f1)\`"
+            echo "- Upstream's workflow file: \`$( (git show upstream-main:.github/workflows/sober-up-eval.yml 2>/dev/null || echo none) | sha256sum | cut -d' ' -f1)\`"
+            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install SDKs
+        run: pip install -r /tmp/eval/evals/sober-up/requirements.txt
+
+      - name: Run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          N: ${{ inputs.n || '10' }}
+          MODELS: ${{ inputs.models }}
+          CASES: ${{ inputs.cases }}
+          CONTROL: ${{ inputs.control }}
+          SAME_SKILL: ${{ steps.prep.outputs.same_skill }}
+        run: |
+          args=(--base /tmp/eval/base.md -n "$N" --out /tmp/eval/out)
+          if [ "$SAME_SKILL" = "true" ]; then
+            # Nothing to compare between two identical skills: measure the skill against no skill.
+            args+=(--control)
+          else
+            args+=(--candidate /tmp/eval/candidate.md)
+            [ "$CONTROL" = "true" ] && args+=(--control)
+          fi
+          [ -n "$MODELS" ] && args+=(--models "$MODELS")
+          [ -n "$CASES" ] && args+=(--cases "$CASES")
+          python /tmp/eval/evals/sober-up/run.py "${args[@]}"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sober-up-eval
+          path: /tmp/eval/out
